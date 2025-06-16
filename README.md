@@ -1,2 +1,0 @@
-# findbuyer
-alıcı odaklı  platform
