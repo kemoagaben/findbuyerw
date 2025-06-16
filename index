@@ -1,0 +1,1355 @@
+import React, { useState, useEffect } from 'react';
+import { Search, MessageSquare, Package, User, Phone, Mail, Shield, Clock, DollarSign, Star, Send, Bot, X, Filter, Sparkles, TrendingUp, Zap, Award, Home, LogIn, UserPlus, Menu, Settings, Bell, Heart, MapPin, Calendar, Eye, CheckCircle, AlertCircle, Camera, Mic, Video, FileText, Users, Globe, AlertTriangle, Timer, Crown, Diamond, Flame, Target, ChevronRight, ChevronDown, Plus, Minus, Edit, Trash2, Share2, Download } from 'lucide-react';
+
+// Mock veri
+const mockRequests = [
+  {
+    id: 1,
+    title: "2024 Model BMW X3 SUV Araç",
+    category: "Otomotiv",
+    description: "2024 sonrası model, düşük km, otomatik vites SUV araç arıyorum. Tercihen beyaz veya gümüş renk.",
+    budget: 1150000,
+    deadline: "2025-07-15",
+    location: "İstanbul",
+    createdAt: "2025-06-01",
+    status: "active",
+    offerCount: 15,
+    urgency: "high",
+    isEmergency: false,
+    verified: true
+  },
+  {
+    id: 2,
+    title: "3+1 Kiralık Daire",
+    category: "Emlak", 
+    description: "Kadıköy'de deniz manzaralı, eşyalı 3+1 daire arıyorum. Tercihen 2-3. kat.",
+    budget: 25000,
+    deadline: "2025-06-20",
+    location: "İstanbul",
+    createdAt: "2025-06-03",
+    status: "active",
+    offerCount: 23,
+    urgency: "medium",
+    isEmergency: false,
+    verified: true
+  },
+  {
+    id: 3,
+    title: "🚨 ACİL - Kalp Hastası Ulaşım",
+    category: "Ulaşım",
+    description: "Kalp krizi geçiren babam için acil hastane ulaşımı gerekiyor. Beşiktaş'tan Acıbadem'e.",
+    budget: 500,
+    deadline: "2025-06-14",
+    location: "İstanbul",
+    createdAt: "2025-06-14",
+    status: "active",
+    offerCount: 8,
+    urgency: "emergency",
+    isEmergency: true,
+    emergencyType: "health",
+    verified: true,
+    proofDocument: "Doktor raporu doğrulandı"
+  },
+  {
+    id: 4,
+    title: "Web Sitesi Tasarımı",
+    category: "Hizmet",
+    description: "E-ticaret sitesi tasarımı ve kodlaması. Modern, responsive tasarım gerekli.",
+    budget: 50000,
+    deadline: "2025-08-01",
+    location: "Online",
+    createdAt: "2025-06-04",
+    status: "active", 
+    offerCount: 31,
+    urgency: "low",
+    isEmergency: false,
+    verified: true
+  },
+  {
+    id: 5,
+    title: "Ev Temizlik Hizmeti",
+    category: "Hizmet",
+    description: "3+1 ev için genel temizlik + mutfak ve banyo detaylı temizlik. Yarın 14:00'dan sonra.",
+    budget: 300,
+    deadline: "2025-06-15",
+    location: "İstanbul Ümraniye",
+    createdAt: "2025-06-14",
+    status: "active",
+    offerCount: 7,
+    urgency: "high",
+    isEmergency: false,
+    verified: true
+  }
+];
+
+const mockOffers = [
+  {
+    id: 1,
+    requestId: 1,
+    sellerName: "Premium Motors",
+    sellerRating: 4.9,
+    sellerBadge: "gold",
+    offerPrice: 1150000,
+    description: "2024 BMW X3 xDrive20d M Sport, 0 km, tam donanım",
+    deliveryTime: "15 gün",
+    advantages: ["Sıfır km", "M Sport paket", "4 yıl garanti"],
+    disadvantages: ["Bütçe üst limit", "15 gün teslimat"],
+    aiPrediction: {
+      valueRetention: 85,
+      maintenanceCost: 15000,
+      fuelCost: 2800,
+      riskLevel: 5
+    },
+    createdAt: "2025-06-02"
+  },
+  {
+    id: 2,
+    requestId: 1,
+    sellerName: "Auto Gallery",
+    sellerRating: 4.6,
+    sellerBadge: "silver", 
+    offerPrice: 1080000,
+    description: "2023 BMW X3 xDrive20d, 12.000 km, servis bakımlı",
+    deliveryTime: "3 gün",
+    advantages: ["Bütçe dostu", "Hızlı teslimat", "Düşük km"],
+    disadvantages: ["1 yaş eski", "M Sport yok"],
+    aiPrediction: {
+      valueRetention: 78,
+      maintenanceCost: 18000,
+      fuelCost: 2900,
+      riskLevel: 15
+    },
+    createdAt: "2025-06-02"
+  },
+  {
+    id: 3,
+    requestId: 3,
+    sellerName: "Acil Ambulans Hizmetleri",
+    sellerRating: 4.8,
+    sellerBadge: "hero",
+    offerPrice: 500,
+    description: "Özel ambulans ile hızlı ve güvenli hasta nakli",
+    deliveryTime: "10 dakika",
+    advantages: ["Tıbbi ekipman", "Deneyimli ekip", "Hızlı"],
+    disadvantages: [],
+    emergencyResponse: true,
+    heroStatus: true,
+    createdAt: "2025-06-14"
+  }
+];
+
+const mockSellers = [
+  {
+    id: 1,
+    name: "TechPro Bilişim",
+    category: "Hizmet",
+    rating: 4.9,
+    reviewCount: 127,
+    location: "İstanbul",
+    verified: true,
+    badge: "gold",
+    specialties: ["Web Tasarım", "E-ticaret", "Mobil App"],
+    completedProjects: 89,
+    responseTime: "2 saat",
+    avatar: "🏢",
+    clusterMember: true,
+    emergencyHero: false
+  },
+  {
+    id: 2,
+    name: "Premium Emlak",
+    category: "Emlak",
+    rating: 4.7,
+    reviewCount: 203,
+    location: "İstanbul",
+    verified: true,
+    badge: "gold",
+    specialties: ["Kiralık", "Satılık", "Yatırım"],
+    completedProjects: 156,
+    responseTime: "30 dk",
+    avatar: "🏠",
+    clusterMember: false,
+    emergencyHero: false
+  },
+  {
+    id: 3,
+    name: "AutoMax Galeri",
+    category: "Otomotiv", 
+    rating: 4.8,
+    reviewCount: 95,
+    location: "İstanbul",
+    verified: true,
+    badge: "gold",
+    specialties: ["SUV", "Sedan", "Hatchback"],
+    completedProjects: 67,
+    responseTime: "1 saat",
+    avatar: "🚗",
+    clusterMember: true,
+    emergencyHero: false
+  },
+  {
+    id: 4,
+    name: "Acil Ambulans Hizmetleri",
+    category: "Sağlık",
+    rating: 5.0,
+    reviewCount: 284,
+    location: "İstanbul",
+    verified: true,
+    badge: "hero",
+    specialties: ["Acil Ulaşım", "Hasta Nakli", "Ambulans"],
+    completedProjects: 1247,
+    responseTime: "5 dakika",
+    avatar: "🚑",
+    clusterMember: false,
+    emergencyHero: true,
+    heroStats: {
+      livesHelped: 134,
+      emergencyResponse: "30 saniye",
+      successRate: "99.8%"
+    }
+  }
+];
+
+const categories = [
+  { id: 'automotive', name: 'Otomotiv', icon: '🚗', color: 'from-blue-400 to-blue-600' },
+  { id: 'realestate', name: 'Emlak', icon: '🏠', color: 'from-green-400 to-green-600' },
+  { id: 'services', name: 'Hizmetler', icon: '⚡', color: 'from-purple-400 to-purple-600' },
+  { id: 'electronics', name: 'Elektronik', icon: '📱', color: 'from-red-400 to-red-600' },
+  { id: 'health', name: 'Sağlık', icon: '🏥', color: 'from-red-500 to-red-700' },
+  { id: 'transport', name: 'Ulaşım', icon: '🚕', color: 'from-yellow-400 to-yellow-600' },
+  { id: 'education', name: 'Eğitim', icon: '📚', color: 'from-indigo-400 to-indigo-600' }
+];
+
+const FindBuyerApp = () => {
+  const [currentScreen, setCurrentScreen] = useState('welcome');
+  const [userType, setUserType] = useState('buyer');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showChatbot, setShowChatbot] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [currentMessage, setCurrentMessage] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [chatStep, setChatStep] = useState(null);
+  const [registrationData, setRegistrationData] = useState({});
+  const [scrollY, setScrollY] = useState(0);
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
+  const [showClusterModal, setShowClusterModal] = useState(false);
+  const [userMembership, setUserMembership] = useState('free');
+  const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+
+  // 3D parallax efekti
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Filtreleme
+  const filteredRequests = mockRequests.filter(request => {
+    const matchesSearch = request.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         request.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || request.category.toLowerCase() === selectedCategory.toLowerCase();
+    return matchesSearch && matchesCategory;
+  });
+
+  // Aciliyet sıralaması
+  const sortedRequests = filteredRequests.sort((a, b) => {
+    const urgencyOrder = { emergency: 0, high: 1, medium: 2, low: 3 };
+    return urgencyOrder[a.urgency] - urgencyOrder[b.urgency];
+  });
+
+  // Chatbot mesaj gönderme - Claude AI entegrasyonu
+  const sendChatMessage = () => {
+    if (!currentMessage.trim()) return;
+
+    const userMessage = { text: currentMessage, sender: 'user', timestamp: new Date() };
+    setChatMessages([...chatMessages, userMessage]);
+
+    // Claude typing indicator
+    setChatMessages(prev => [...prev, { 
+      text: '🧠 Claude düşünüyor...', 
+      sender: 'bot', 
+      timestamp: new Date(), 
+      isTyping: true 
+    }]);
+
+    setTimeout(() => {
+      setChatMessages(prev => prev.filter(msg => !msg.isTyping));
+      
+      const botResponse = generateBotResponse(currentMessage);
+      setChatMessages(prev => [...prev, { 
+        text: botResponse.text, 
+        sender: 'bot', 
+        timestamp: new Date(), 
+        quickReplies: botResponse.quickReplies,
+        type: botResponse.type
+      }]);
+    }, 1500);
+
+    setCurrentMessage('');
+  };
+
+  // AI chatbot yanıt sistemi - Claude bağlantılı
+  const generateBotResponse = (message) => {
+    const lowerMessage = message.toLowerCase();
+    
+    // Kayıt akışı
+    if (lowerMessage.includes('kayıt') || lowerMessage.includes('üye') || chatStep === 'register') {
+      if (!chatStep) {
+        setChatStep('register_start');
+        return {
+          text: '🎉 Harika! FindBuyer\'a hoş geldiniz! Ben Claude AI asistanınızım. Hiç form doldurmadan, sadece konuşarak üye olacaksınız. Hangi rolde katılmak istersiniz?\n\n💡 İpucu: Claude olarak size kişiselleştirilmiş öneriler sunacağım!',
+          quickReplies: ['🛒 Alıcı olarak', '🏪 Satıcı olarak', '👥 Her ikisi de'],
+          type: 'registration'
+        };
+      }
+      
+      if (chatStep === 'register_start') {
+        if (lowerMessage.includes('alıcı')) {
+          setChatStep('register_name');
+          setRegistrationData({...registrationData, userType: 'buyer'});
+          return {
+            text: '🛒 Mükemmel seçim! Alıcı olarak kayıt oluyorsunuz. Size nasıl hitap etmemi istersiniz?\n\n🧠 Claude olarak, kişisel alışveriş tercihlerinizi öğrenerek size en uygun teklifleri önerebilirim.',
+            quickReplies: []
+          };
+        } else if (lowerMessage.includes('satıcı')) {
+          setChatStep('register_name');
+          setRegistrationData({...registrationData, userType: 'seller'});
+          return {
+            text: '🏪 Harika! Satıcı olarak kayıt oluyorsunuz. Firma adınız veya kişisel isminiz nedir?\n\n📊 Claude olarak satış performansınızı analiz edip, büyüme stratejileri önereceğim.',
+            quickReplies: []
+          };
+        }
+      }
+      
+      if (chatStep === 'register_name') {
+        setChatStep('register_contact');
+        setRegistrationData({...registrationData, name: message});
+        return {
+          text: `Merhaba ${message}! 📱 Telefon numaranızı alabilir miyim?\n\n🔐 Güvenlik için SMS doğrulama göndereceğim. Claude olarak verilerinizi koruma konusunda çok titizim.`,
+          quickReplies: []
+        };
+      }
+      
+      if (chatStep === 'register_contact') {
+        setChatStep('register_location');
+        setRegistrationData({...registrationData, phone: message});
+        return {
+          text: '✅ SMS doğrulama kodu gönderildi! Hangi şehirde yaşıyorsunuz?\n\n🌍 Claude olarak bulunduğunuz bölgedeki fırsatları özel olarak analiz edeceğim.',
+          quickReplies: ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya', 'Diğer']
+        };
+      }
+      
+      if (chatStep === 'register_location') {
+        setChatStep('register_interests');
+        setRegistrationData({...registrationData, location: message});
+        return {
+          text: `Excellent! ${message} için yerel pazarı analiz ediyorum...\n\n🎯 Son olarak, hangi kategorilerde alışveriş yapmayı planlıyorsunuz? Bu bilgi ile size özel AI öneriler hazırlayacağım.`,
+          quickReplies: ['🚗 Otomotiv', '🏠 Emlak', '📱 Elektronik', '👗 Moda', '🏥 Sağlık', '🎓 Eğitim']
+        };
+      }
+      
+      if (chatStep === 'register_interests') {
+        setChatStep(null);
+        setIsRegistered(true);
+        const userData = {...registrationData, location: message, interests: message};
+        return {
+          text: `🎊 Tebrikler ${userData.name}! Claude AI ile FindBuyer üyeliğiniz tamamlandı!\n\n✅ ${userData.userType === 'buyer' ? 'Alıcı' : 'Satıcı'} profili oluşturuldu\n📞 ${userData.phone} doğrulandı\n📍 ${userData.location} bölgesi aktif\n🎯 ${userData.interests} kategorisi analiz ediliyor\n\n🧠 Claude AI önerilerim hazır! Şimdi platformun tüm gücünü deneyimleyin!`,
+          quickReplies: ['🏠 Ana Sayfaya Git', '📝 AI Destekli Talep Oluştur', '🔍 Akıllı Satıcı Arama', '📊 Kişisel Dashboard']
+        };
+      }
+    }
+    
+    // Platform nasıl çalışır
+    if (lowerMessage.includes('nasıl') || lowerMessage.includes('çalışır')) {
+      return {
+        text: '🚀 FindBuyer\'ın Claude AI destekli sistemi şöyle çalışır:\n\n1️⃣ **Akıllı Talep**: AI ile talebinizi optimize ederim\n2️⃣ **Otomatik Eşleştirme**: En uygun satıcıları bulurum\n3️⃣ **Gerçek Zamanlı Analiz**: Teklifleri karşılaştırırım\n4️⃣ **Öneriler**: Size özel tavsiyelerde bulunurum\n5️⃣ **7/24 Destek**: Her an yanınızdayım!\n\n🧠 Claude olarak her adımda size rehberlik ederim.',
+        quickReplies: ['📝 Talep Oluştur', '🔍 Satıcı Ara', '💡 AI Önerilerimi Gör', '🆘 Acil Durum Sistemi']
+      };
+    }
+    
+    // Ana sayfa yönlendirme
+    if (lowerMessage.includes('ana sayfa') || lowerMessage.includes('home') || lowerMessage.includes('dashboard')) {
+      setCurrentScreen('home');
+      return {
+        text: '🏠 Ana sayfaya yönlendiriliyorsunuz! Claude AI dashboard\'unuzda kişisel önerilerinizi görebilirsiniz.',
+        quickReplies: []
+      };
+    }
+    
+    // Acil durum yardımı
+    if (lowerMessage.includes('acil') || lowerMessage.includes('ambulans') || lowerMessage.includes('hasta') || lowerMessage.includes('emergency')) {
+      return {
+        text: '🚨 ACİL DURUM TESPİT EDİLDİ!\n\nClaude AI olarak size hemen yardım ediyorum:\n\n🏥 **Sağlık Acili**: Ambulans, hasta nakli (2 dk yanıt)\n🚗 **Ulaşım Acili**: Taksi, çekici (5 dk yanıt)\n🏠 **Barınma Acili**: Konaklama, güvenlik\n⚡ **Teknik Acil**: Elektrik, çilingir\n\n🦸‍♂️ Acil durum kahramanlarımız aktif bekliyorlar!',
+        quickReplies: ['🚑 SAĞLIK ACİLİ', '🚗 ULAŞIM ACİLİ', '🏠 BARINMA ACİLİ', '⚡ TEKNİK ACİL'],
+        type: 'emergency'
+      };
+    }
+    
+    // Küme oluşturma
+    if (lowerMessage.includes('küme') || lowerMessage.includes('grup') || lowerMessage.includes('birlikte') || lowerMessage.includes('toplu')) {
+      return {
+        text: '👥 Claude AI Küme Sistemi aktif!\n\n🛒 **Alıcı Kümeleri**:\n• %30\'a varan toplu indirimler\n• AI destekli grup oluşturma\n• Arkadaş davet sistemi\n\n🏪 **Satıcı Kümeleri**:\n• Büyük siparişleri karşılama\n• Risk ve kâr paylaşımı\n• AI koordinasyonu\n\n🧠 Size en uygun kümeyi bulayım mı?',
+        quickReplies: ['🛒 Alıcı Kümesi Oluştur', '🏪 Satıcı Kümesi Oluştur', '🔍 Mevcut Kümeleri Gör', '💡 AI Küme Önerisi']
+      };
+    }
+    
+    // Talep oluşturma yardımı
+    if (lowerMessage.includes('talep') || lowerMessage.includes('oluştur') || lowerMessage.includes('ihtiyaç')) {
+      return {
+        text: '📝 Claude AI Talep Asistanı aktif!\n\n🎯 Size özel talep oluşturalım:\n\n1️⃣ **Akıllı Kategori Seçimi**\n2️⃣ **Bütçe Optimizasyonu**\n3️⃣ **Otomatik Açıklama**\n4️⃣ **Satıcı Eşleştirme**\n5️⃣ **Teklif Analizi**\n\n🧠 Ne aramak istiyorsunuz? Claude olarak en detaylı şekilde yardımcı olacağım!',
+        quickReplies: ['🚗 Araç Arıyorum', '🏠 Ev Arıyorum', '💻 Hizmet Arıyorum', '📱 Ürün Arıyorum', '✨ AI Öner']
+      };
+    }
+    
+    // Satıcı arama
+    if (lowerMessage.includes('satıcı') || lowerMessage.includes('firma') || lowerMessage.includes('şirket')) {
+      return {
+        text: '🔍 Claude AI Satıcı Analizi başlatılıyor...\n\n📊 **Akıllı Filtreleme**:\n• Güvenilirlik skoru\n• Müşteri memnuniyeti\n• Yanıt hızı analizi\n• Fiyat performansı\n• Geçmiş başarılar\n\n🏆 Size en uygun satıcıları AI algoritması ile buluyorum!',
+        quickReplies: ['🥇 En İyi Satıcılar', '⚡ Hızlı Yanıt Verenler', '💰 En Uygun Fiyatlı', '🛡️ Güvenli Satıcılar']
+      };
+    }
+    
+    // Kişisel asistan özellikler
+    if (lowerMessage.includes('claude') || lowerMessage.includes('ai') || lowerMessage.includes('asistan')) {
+      return {
+        text: '🧠 Claude AI özelliklerin:\n\n🎯 **Kişisel Alışveriş Asistanı**\n📊 **Gerçek Zamanlı Pazar Analizi**\n🔮 **Fiyat Tahmin Modeli**\n🛡️ **Dolandırıcılık Koruması**\n📱 **7/24 Anlık Destek**\n🤝 **Müzakere Yardımcısı**\n📈 **Satış Performans Analizi**\n\n✨ Hangi Claude özelliğimi deneyimlemek istersiniz?',
+        quickReplies: ['🔮 Fiyat Tahmini', '🛡️ Güvenlik Kontrolü', '🤝 Müzakere Yardımı', '📊 Pazar Analizi']
+      };
+    }
+    
+    // Default karşılama - Claude introduction
+    if (lowerMessage.includes('merhaba') || lowerMessage.includes('selam') || lowerMessage.includes('hello') || !chatMessages.length) {
+      return {
+        text: '👋 Merhaba! Ben Claude, FindBuyer\'ın yapay zeka asistanıyım!\n\n🧠 **Claude AI Yeteneklerim**:\n✨ Form doldurmadan konuşarak üyelik\n🎯 Kişiselleştirilmiş alışveriş deneyimi\n📊 Gerçek zamanlı pazar analizi\n🛡️ 7/24 güvenlik ve destek\n🚨 Acil durum müdahale sistemi\n\n🚀 Size nasıl yardımcı olabilirim?',
+        quickReplies: ['🔐 Kayıt Ol (Claude ile)', '❓ Platform Nasıl Çalışır?', '🆘 Acil Durum', '👥 AI Küme Sistemi', '🧠 Claude Özellikler'],
+        type: 'welcome'
+      };
+    }
+    
+    // Fiyat tahmini
+    if (lowerMessage.includes('fiyat') || lowerMessage.includes('tahmin') || lowerMessage.includes('analiz')) {
+      return {
+        text: '🔮 Claude AI Fiyat Tahmin Motoru aktif!\n\n📊 **Analiz Parametreleri**:\n• Geçmiş fiyat trendleri\n• Sezonsal dalgalanmalar\n• Rekabet analizi\n• Pazar doygunluğu\n• Talep/arz dengesi\n\n💡 Hangi ürün/hizmet için fiyat analizi yapmamı istersiniz?',
+        quickReplies: ['🚗 Araç Fiyat Analizi', '🏠 Emlak Değerleme', '📱 Elektronik Trend', '💼 Hizmet Fiyatları']
+      };
+    }
+    
+    // Genel AI yardım
+    return {
+      text: '🤖 Claude AI olarak size yardımcı olmak için buradayım!\n\n💫 **Popüler Komutlar**:\n• "kayıt ol" - Hızlı üyelik\n• "talep oluştur" - AI destekli talep\n• "satıcı ara" - Akıllı eşleştirme\n• "acil durum" - Anında yardım\n• "fiyat analizi" - Pazar tahmini\n\n🎯 Ne yapmak istiyorsunuz?',
+      quickReplies: ['🔐 Kayıt Ol', '📝 Talep Oluştur', '🔍 Satıcı Ara', '🆘 Acil Durum', '🧠 AI Özellikler']
+    };
+  };
+
+  // Quick reply tıklama
+  const handleQuickReply = (reply) => {
+    const userMessage = { text: reply, sender: 'user', timestamp: new Date() };
+    setChatMessages(prev => [...prev, userMessage]);
+
+    // Claude typing indicator
+    setChatMessages(prev => [...prev, { 
+      text: '🧠 Claude düşünüyor...', 
+      sender: 'bot', 
+      timestamp: new Date(), 
+      isTyping: true 
+    }]);
+
+    setTimeout(() => {
+      setChatMessages(prev => prev.filter(msg => !msg.isTyping));
+      
+      const botResponse = generateBotResponse(reply);
+      setChatMessages(prev => [...prev, { 
+        text: botResponse.text, 
+        sender: 'bot', 
+        timestamp: new Date(), 
+        quickReplies: botResponse.quickReplies,
+        type: botResponse.type
+      }]);
+    }, 1500);
+  };
+
+  // Üyelik seviyesi badge'i
+  const getMembershipBadge = (level) => {
+    const badges = {
+      diamond: { icon: '💎', name: 'Diamond', color: 'from-purple-500 to-pink-500' },
+      platinum: { icon: '🥇', name: 'Platinum', color: 'from-gray-400 to-gray-600' },
+      gold: { icon: '🥈', name: 'Gold', color: 'from-yellow-400 to-yellow-600' },
+      silver: { icon: '🥉', name: 'Silver', color: 'from-gray-300 to-gray-500' },
+      hero: { icon: '🦸‍♂️', name: 'Hero', color: 'from-red-500 to-red-700' },
+      free: { icon: '🆓', name: 'Free', color: 'from-gray-200 to-gray-400' }
+    };
+    return badges[level] || badges.free;
+  };
+
+  // Aciliyet badge'i
+  const getUrgencyBadge = (urgency, isEmergency) => {
+    if (isEmergency) {
+      return { icon: '🚨', text: 'ACİL DURUM', color: 'bg-red-600 text-white animate-pulse' };
+    }
+    
+    const badges = {
+      high: { icon: '🔥', text: 'Yüksek', color: 'bg-orange-500 text-white' },
+      medium: { icon: '⚡', text: 'Orta', color: 'bg-yellow-500 text-white' },
+      low: { icon: '📅', text: 'Normal', color: 'bg-green-500 text-white' }
+    };
+    return badges[urgency] || badges.low;
+  };
+
+  // 3D Card Component
+  const Card3D = ({ children, className = "" }) => {
+    const [transform, setTransform] = useState('');
+
+    const handleMouseMove = (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = (y - centerY) / 15;
+      const rotateY = (centerX - x) / 15;
+
+      setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`);
+    };
+
+    const handleMouseLeave = () => {
+      setTransform('');
+    };
+
+    return (
+      <div
+        className={`transition-all duration-500 ${className}`}
+        style={{ transform, transformStyle: 'preserve-3d' }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        {children}
+      </div>
+    );
+  };
+
+  // Header Component
+  const Header = () => (
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-orange-500 to-orange-600 shadow-2xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div 
+            className="flex items-center cursor-pointer"
+            onClick={() => setCurrentScreen('welcome')}
+          >
+            <div className="text-3xl font-black text-white">
+              🛍️ FindBuyer
+            </div>
+            <div className="ml-2 text-sm text-orange-200">
+              Alıcı Odaklı Platform
+            </div>
+          </div>
+          
+          <nav className="hidden md:flex space-x-6">
+            <button
+              onClick={() => setCurrentScreen('home')}
+              className="text-white hover:text-orange-200 flex items-center gap-2 font-medium transition-all hover:scale-105"
+            >
+              <Home size={18} />
+              Ana Sayfa
+            </button>
+            <button
+              onClick={() => setCurrentScreen('requests')}
+              className="text-white hover:text-orange-200 flex items-center gap-2 font-medium transition-all hover:scale-105"
+            >
+              <Package size={18} />
+              Talepler
+            </button>
+            <button
+              onClick={() => setCurrentScreen('sellers')}
+              className="text-white hover:text-orange-200 flex items-center gap-2 font-medium transition-all hover:scale-105"
+            >
+              <User size={18} />
+              Satıcılar
+            </button>
+            <button
+              onClick={() => setShowEmergencyModal(true)}
+              className="text-white hover:text-orange-200 flex items-center gap-2 font-medium transition-all hover:scale-105"
+            >
+              <AlertTriangle size={18} />
+              Acil Durum
+            </button>
+          </nav>
+          
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-3">
+              <button className="bg-white/20 text-white px-3 py-2 rounded-xl font-bold hover:bg-white/30 transition-all flex items-center gap-1">
+                <Bell size={16} />
+                <span className="bg-red-500 text-xs px-1 rounded-full">3</span>
+              </button>
+              <button className="bg-white/20 text-white px-3 py-2 rounded-xl font-bold hover:bg-white/30 transition-all">
+                <Settings size={16} />
+              </button>
+            </div>
+            <button
+              onClick={() => setShowChatbot(true)}
+              className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 text-white px-4 py-2 rounded-xl font-bold hover:shadow-lg transition-all hover:scale-105 flex items-center gap-2"
+            >
+              <div className="relative">
+                🧠
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              </div>
+              Claude AI
+            </button>
+            <div className="bg-white/20 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+              {getMembershipBadge(userMembership).icon}
+              {userType === 'buyer' ? '🛒 Alıcı' : '🏪 Satıcı'}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+
+  // Welcome Screen
+  const WelcomeScreen = () => (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100">
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-6xl font-black text-gray-800 mb-4" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>
+            FindBuyer'a Hoş Geldiniz! 🎉
+          </h1>
+          <p className="text-2xl text-gray-600 mb-4">
+            Dünya'nın ilk alıcı odaklı pazaryeri!
+          </p>
+          <p className="text-lg text-gray-500">
+            Satıcılar sizin için yarışsın, en iyi teklifi alın!
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {categories.map((category, index) => (
+            <Card3D key={category.id}>
+              <div
+                className={`bg-gradient-to-br ${category.color} p-8 rounded-3xl text-white cursor-pointer shadow-2xl hover:shadow-3xl transition-all duration-500`}
+                onClick={() => {
+                  setSelectedCategory(category.id);
+                  setCurrentScreen('requests');
+                }}
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="text-6xl mb-4 text-center">{category.icon}</div>
+                <h3 className="text-2xl font-black text-center">{category.name}</h3>
+                <p className="text-center mt-2 opacity-90">
+                  {category.name} kategorisindeki talepleri keşfet
+                </p>
+              </div>
+            </Card3D>
+          ))}
+        </div>
+
+        <div className="text-center space-y-6">
+          <Card3D>
+            <button
+              onClick={() => setCurrentScreen('home')}
+              className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-12 py-4 rounded-2xl text-xl font-black shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105"
+            >
+              <Sparkles size={24} className="inline mr-3" />
+              Hemen Başla
+            </button>
+          </Card3D>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <Card3D>
+              <div className="bg-white p-6 rounded-2xl shadow-xl">
+                <div className="text-4xl mb-3">🆘</div>
+                <h3 className="font-bold text-lg mb-2">Acil Durum Desteği</h3>
+                <p className="text-gray-600">24/7 acil durumlarınızda yanınızdayız</p>
+              </div>
+            </Card3D>
+            <Card3D>
+              <div className="bg-white p-6 rounded-2xl shadow-xl">
+                <div className="text-4xl mb-3">👥</div>
+                <h3 className="font-bold text-lg mb-2">Küme Alışverişi</h3>
+                <p className="text-gray-600">Arkadaşlarınızla birlikte daha ucuza alın</p>
+              </div>
+            </Card3D>
+            <Card3D>
+              <div className="bg-white p-6 rounded-2xl shadow-xl">
+                <div className="text-4xl mb-3">🤖</div>
+                <h3 className="font-bold text-lg mb-2">AI Asistan</h3>
+                <p className="text-gray-600">Yapay zeka destekli akıllı alışveriş</p>
+              </div>
+            </Card3D>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Home Dashboard
+  const HomeDashboard = () => (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Hero Section - Enhanced */}
+        <Card3D>
+          <div 
+            className="relative overflow-hidden rounded-3xl shadow-2xl mb-8"
+            style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+              transform: `translateY(${scrollY * 0.05}px)`
+            }}
+          >
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute -top-20 -right-20 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse"></div>
+              <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse delay-1000"></div>
+              <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-r from-blue-400 to-purple-600 rounded-full blur-2xl animate-spin-slow"></div>
+            </div>
+            
+            <div className="relative p-12 text-white">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="relative">
+                  <div className="text-6xl animate-bounce">🧠</div>
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center animate-ping">
+                    <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                  </div>
+                </div>
+                <div>
+                  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-bold">
+                    ✨ Claude AI Destekli Platform
+                  </span>
+                </div>
+              </div>
+              <h2 className="text-6xl font-black mb-6" style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.3)' }}>
+                Hayalinizdeki Ürünü Bulalım! ✨
+              </h2>
+              <p className="text-2xl mb-8 opacity-90">
+                🤖 Claude AI ile akıllı alışveriş deneyimi yaşayın!
+              </p>
+              
+              <div className="flex gap-4 max-w-4xl">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-4 text-purple-600" size={24} />
+                  <input
+                    type="text"
+                    placeholder="Claude AI ile ne arıyorsunuz?"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-14 pr-6 py-4 rounded-2xl text-gray-800 font-medium shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300 text-lg backdrop-blur-sm bg-white/90"
+                  />
+                  <div className="absolute right-4 top-4 text-purple-600">
+                    <Sparkles size={20} className="animate-pulse" />
+                  </div>
+                </div>
+                <button
+                  onClick={() => setCurrentScreen('requests')}
+                  className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 text-white px-8 py-4 rounded-2xl font-black shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                >
+                  🧠 Claude ile Ara
+                </button>
+              </div>
+              
+              <div className="mt-8 flex items-center gap-6">
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium">Claude AI Aktif</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium">7/24 Destek</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium">Anlık Analiz</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card3D>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {[
+            { icon: <TrendingUp />, label: "Aktif Talepler", value: "2,547", color: "from-blue-400 to-blue-600" },
+            { icon: <Zap />, label: "Günlük Eşleşme", value: "423", color: "from-green-400 to-green-600" },
+            { icon: <Award />, label: "Mutlu Müşteri", value: "98.7%", color: "from-purple-400 to-purple-600" },
+            { icon: <Users />, label: "Aktif Satıcı", value: "1,289", color: "from-orange-400 to-orange-600" }
+          ].map((stat, index) => (
+            <Card3D key={index}>
+              <div className={`bg-gradient-to-br ${stat.color} p-6 rounded-2xl text-white shadow-xl`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-white/80 font-medium">{stat.label}</p>
+                    <p className="text-3xl font-black mt-1">{stat.value}</p>
+                  </div>
+                  <div className="bg-white/20 p-3 rounded-xl">
+                    {React.cloneElement(stat.icon, { size: 28 })}
+                  </div>
+                </div>
+              </div>
+            </Card3D>
+          ))}
+        </div>
+
+        {/* Son Talepler */}
+        <Card3D>
+          <div className="bg-white rounded-3xl shadow-xl p-8">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-black text-gray-800">🔥 Popüler Talepler</h3>
+              <button
+                onClick={() => setCurrentScreen('requests')}
+                className="text-orange-600 hover:text-orange-700 font-bold"
+              >
+                Tümünü Gör →
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sortedRequests.slice(0, 6).map((request, index) => (
+                <Card3D key={request.id}>
+                  <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border-2 border-orange-100 hover:border-orange-300 transition-all cursor-pointer">
+                    <div className="flex justify-between items-start mb-3">
+                      <span className="bg-gradient-to-r from-orange-400 to-orange-600 text-white px-3 py-1 rounded-lg text-sm font-bold">
+                        {request.category}
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-bold ${getUrgencyBadge(request.urgency, request.isEmergency).color}`}>
+                        {getUrgencyBadge(request.urgency, request.isEmergency).icon} {getUrgencyBadge(request.urgency, request.isEmergency).text}
+                      </span>
+                    </div>
+                    <h4 className="text-lg font-black text-gray-800 mb-2">{request.title}</h4>
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{request.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-2xl font-black text-orange-600">
+                        {request.budget.toLocaleString()} ₺
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {request.offerCount} teklif
+                      </span>
+                    </div>
+                  </div>
+                </Card3D>
+              ))}
+            </div>
+          </div>
+        </Card3D>
+      </div>
+    </div>
+  );
+
+  // Requests Screen
+  const RequestsScreen = () => (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h2 className="text-3xl font-black text-gray-800 mb-4">🎯 Aktif Talepler</h2>
+          
+          {/* Filtreler */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  placeholder="Talep ara..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 transition-all"
+                />
+              </div>
+              
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 transition-all"
+              >
+                <option value="all">🎯 Tüm Kategoriler</option>
+                <option value="otomotiv">🚗 Otomotiv</option>
+                <option value="emlak">🏠 Emlak</option>
+                <option value="hizmet">⚡ Hizmetler</option>
+                <option value="elektronik">📱 Elektronik</option>
+                <option value="sağlık">🏥 Sağlık</option>
+                <option value="ulaşım">🚕 Ulaşım</option>
+              </select>
+              
+              <select className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 transition-all">
+                <option>💰 Tüm Bütçeler</option>
+                <option>0 - 10.000 ₺</option>
+                <option>10.000 - 50.000 ₺</option>
+                <option>50.000 - 100.000 ₺</option>
+                <option>100.000+ ₺</option>
+              </select>
+              
+              <select className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 transition-all">
+                <option>⚡ Tüm Aciliyet</option>
+                <option>🚨 Acil Durum</option>
+                <option>🔥 Yüksek</option>
+                <option>⚡ Orta</option>
+                <option>📅 Normal</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Talep Listesi */}
+        <div className="space-y-6">
+          {sortedRequests.map((request, index) => (
+            <Card3D key={request.id}>
+              <div className={`bg-white rounded-2xl shadow-xl p-8 border-2 transition-all ${
+                request.isEmergency 
+                  ? 'border-red-300 bg-red-50' 
+                  : 'border-orange-100 hover:border-orange-300'
+              }`}>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="bg-gradient-to-r from-orange-400 to-orange-600 text-white px-4 py-2 rounded-lg font-bold">
+                        {request.category}
+                      </span>
+                      <span className="text-gray-500 flex items-center gap-1">
+                        <MapPin size={16} />
+                        {request.location}
+                      </span>
+                      <span className={`px-3 py-1 rounded-full text-sm font-bold ${getUrgencyBadge(request.urgency, request.isEmergency).color}`}>
+                        {getUrgencyBadge(request.urgency, request.isEmergency).icon} {getUrgencyBadge(request.urgency, request.isEmergency).text}
+                      </span>
+                      {request.verified && (
+                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                          <CheckCircle size={12} />
+                          Doğrulandı
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-2xl font-black text-gray-800 mb-3">{request.title}</h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed">{request.description}</p>
+                    {request.isEmergency && request.proofDocument && (
+                      <div className="bg-red-100 border border-red-300 rounded-lg p-3 mb-4">
+                        <span className="text-red-700 font-bold text-sm">
+                          🏥 {request.proofDocument}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-6 text-sm text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <Calendar size={16} />
+                        Son: {new Date(request.deadline).toLocaleDateString('tr-TR')}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Eye size={16} />
+                        {request.offerCount} teklif
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock size={16} />
+                        {new Date(request.createdAt).toLocaleDateString('tr-TR')}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-4xl font-black text-orange-600 mb-2">
+                      {request.budget.toLocaleString()} ₺
+                    </div>
+                    <div className="space-y-2">
+                      <button 
+                        onClick={() => setSelectedRequest(request)}
+                        className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all block w-full"
+                      >
+                        📋 Detayları Gör
+                      </button>
+                      {userType === 'seller' && (
+                        <button 
+                          className={`px-6 py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all block w-full ${
+                            request.isEmergency 
+                              ? 'bg-gradient-to-r from-red-500 to-red-600 text-white'
+                              : 'bg-gradient-to-r from-green-500 to-green-600 text-white'
+                          }`}
+                        >
+                          {request.isEmergency ? '🚨 ACİL TEKLİF VER' : '💰 Teklif Ver'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card3D>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  // Sellers Screen
+  const SellersScreen = () => (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h2 className="text-3xl font-black text-gray-800 mb-4">🏪 Doğrulanmış Satıcılar</h2>
+          <p className="text-gray-600">En iyi satıcılarımızı keşfedin ve onlarla direkt iletişime geçin.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {mockSellers.map((seller, index) => (
+            <Card3D key={seller.id}>
+              <div className="bg-white rounded-3xl shadow-xl p-8 border-2 border-orange-100 hover:border-orange-300 transition-all">
+                <div className="text-center mb-6">
+                  <div className="text-6xl mb-4">{seller.avatar}</div>
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <h3 className="text-xl font-black text-gray-800">{seller.name}</h3>
+                    {seller.verified && (
+                      <CheckCircle className="text-green-500" size={20} />
+                    )}
+                    <div className={`px-2 py-1 rounded-lg text-xs font-bold text-white bg-gradient-to-r ${getMembershipBadge(seller.badge).color}`}>
+                      {getMembershipBadge(seller.badge).icon} {getMembershipBadge(seller.badge).name}
+                    </div>
+                  </div>
+                  <span className="bg-gradient-to-r from-orange-400 to-orange-600 text-white px-3 py-1 rounded-lg text-sm font-bold">
+                    {seller.category}
+                  </span>
+                  {seller.emergencyHero && (
+                    <div className="mt-2">
+                      <span className="bg-gradient-to-r from-red-500 to-red-700 text-white px-3 py-1 rounded-lg text-sm font-bold">
+                        🦸‍♂️ Acil Durum Kahramanı
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">⭐ Değerlendirme</span>
+                    <div className="flex items-center gap-1">
+                      <Star className="text-yellow-500 fill-current" size={16} />
+                      <span className="font-bold">{seller.rating}</span>
+                      <span className="text-gray-500">({seller.reviewCount})</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">📍 Konum</span>
+                    <span className="font-medium">{seller.location}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">⚡ Yanıt Süresi</span>
+                    <span className="font-medium">{seller.responseTime}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">✅ Tamamlanan</span>
+                    <span className="font-medium">{seller.completedProjects} proje</span>
+                  </div>
+
+                  {seller.clusterMember && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <span className="text-blue-700 font-bold text-sm">
+                        👥 Küme Üyesi - Büyük siparişleri karşılayabilir
+                      </span>
+                    </div>
+                  )}
+
+                  {seller.emergencyHero && seller.heroStats && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <div className="text-red-700 font-bold text-sm mb-2">🦸‍♂️ Kahraman İstatistikleri:</div>
+                      <div className="text-xs space-y-1">
+                        <div>❤️ {seller.heroStats.livesHelped} kişiye yardım etti</div>
+                        <div>⚡ {seller.heroStats.emergencyResponse} yanıt süresi</div>
+                        <div>🎯 {seller.heroStats.successRate} başarı oranı</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mb-6">
+                  <div className="text-sm text-gray-600 mb-2">🏆 Uzmanlık Alanları:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {seller.specialties.map((specialty, idx) => (
+                      <span key={idx} className="bg-orange-100 text-orange-700 px-2 py-1 rounded-lg text-xs font-medium">
+                        {specialty}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all">
+                    💬 Mesaj Gönder
+                  </button>
+                  <button className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all">
+                    📞 Hemen Ara
+                  </button>
+                </div>
+              </div>
+            </Card3D>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  // Chatbot Component - Claude AI Enhanced
+  const Chatbot = () => (
+    <div className="fixed bottom-4 right-4 z-50">
+      {showChatbot ? (
+        <Card3D>
+          <div className="bg-gradient-to-br from-white to-blue-50 rounded-3xl shadow-2xl w-96 h-[700px] flex flex-col border-2 border-blue-200 overflow-hidden">
+            {/* Header dengan Claude branding */}
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white p-6 rounded-t-3xl relative overflow-hidden">
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white rounded-full blur-2xl animate-pulse"></div>
+                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white rounded-full blur-2xl animate-pulse delay-1000"></div>
+              </div>
+              <div className="relative flex justify-between items-center">
+                <div>
+                  <h3 className="font-black text-xl flex items-center gap-2">
+                    🧠 Claude AI 
+                    <span className="text-xs bg-white/20 px-2 py-1 rounded-full">LIVE</span>
+                  </h3>
+                  <p className="text-blue-100 text-sm animate-pulse">FindBuyer Yapay Zeka Asistanı</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-blue-100">7/24 Aktif</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowChatbot(false)}
+                  className="hover:bg-blue-700 rounded-full p-2 transition-all transform hover:scale-110"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+            
+            {/* Chat messages area */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-blue-50/50 to-white">
+              {chatMessages.length === 0 && (
+                <div className="text-center py-8">
+                  <div className="relative mb-6">
+                    <div className="text-8xl animate-bounce">🧠</div>
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center animate-ping">
+                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-2xl shadow-lg mb-4">
+                    <p className="font-bold mb-2">👋 Merhaba! Ben Claude AI</p>
+                    <p className="text-sm opacity-90">FindBuyer'ın yapay zeka asistanıyım. Size nasıl yardımcı olabilirim?</p>
+                  </div>
+                  <div className="space-y-2">
+                    {['🔐 Claude ile Kayıt Ol', '🧠 AI Özelliklerimi Keşfet', '🆘 Acil Durum Sistemi', '👥 Akıllı Küme Oluştur'].map((reply, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleQuickReply(reply)}
+                        className="block w-full text-left px-4 py-3 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl hover:from-blue-200 hover:to-purple-200 transition-all border border-blue-200 font-medium transform hover:scale-105"
+                      >
+                        {reply}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {chatMessages.map((message, index) => (
+                <div key={index} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-xs px-4 py-3 rounded-2xl transform hover:scale-105 transition-all ${
+                    message.sender === 'user' 
+                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' 
+                      : message.isTyping
+                      ? 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-600 animate-pulse'
+                      : message.type === 'emergency'
+                      ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg animate-pulse'
+                      : message.type === 'registration' 
+                      ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg'
+                      : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg border border-blue-200'
+                  }`}>
+                    {message.sender === 'bot' && !message.isTyping && (
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                          🧠
+                        </div>
+                        <span className="text-xs opacity-80">Claude AI</span>
+                      </div>
+                    )}
+                    <p className="whitespace-pre-wrap leading-relaxed">{message.text}</p>
+                    {message.quickReplies && message.quickReplies.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        {message.quickReplies.map((reply, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleQuickReply(reply)}
+                            className="block w-full text-left px-3 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all text-sm font-medium border border-white/30 transform hover:scale-105"
+                          >
+                            {reply}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Input area */}
+            <div className="p-4 border-t border-blue-100 bg-gradient-to-r from-blue-50 to-purple-50">
+              <div className="flex gap-2 mb-3">
+                <button className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all flex items-center justify-center gap-1 transform hover:scale-105">
+                  <Mic size={16} />
+                  Sesli
+                </button>
+                <button className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 rounded-lg text-sm font-medium hover:from-purple-600 hover:to-purple-700 transition-all flex items-center justify-center gap-1 transform hover:scale-105">
+                  <Video size={16} />
+                  Görüntülü
+                </button>
+                <button className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-2 rounded-lg text-sm font-medium hover:from-green-600 hover:to-green-700 transition-all flex items-center justify-center gap-1 transform hover:scale-105">
+                  <Camera size={16} />
+                  Fotoğraf
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={currentMessage}
+                  onChange={(e) => setCurrentMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendChatMessage()}
+                  placeholder="Claude AI ile konuşun..."
+                  className="flex-1 px-4 py-3 border-2 border-blue-200 rounded-xl focus:border-blue-500 outline-none bg-white/80 backdrop-blur-sm transition-all"
+                />
+                <button
+                  onClick={sendChatMessage}
+                  className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 text-white p-3 rounded-xl hover:shadow-xl transition-all transform hover:scale-110"
+                >
+                  <Send size={18} />
+                </button>
+              </div>
+              <div className="text-center mt-2">
+                <span className="text-xs text-gray-500">Powered by Claude AI • Anthropic</span>
+              </div>
+            </div>
+          </div>
+        </Card3D>
+      ) : (
+        <Card3D>
+          <button
+            onClick={() => setShowChatbot(true)}
+            className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 text-white w-20 h-20 rounded-full shadow-2xl hover:shadow-3xl transition-all hover:scale-110 flex items-center justify-center relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-50 animate-pulse"></div>
+            <div className="relative">
+              <div className="text-3xl animate-bounce">🧠</div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-ping"></div>
+            </div>
+          </button>
+        </Card3D>
+      )}
+    </div>
+  );
+
+  // Acil Durum Modal
+  const EmergencyModal = () => (
+    showEmergencyModal && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <Card3D>
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-6 rounded-t-3xl">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-black">🚨 Acil Durum Sistemi</h2>
+                <button
+                  onClick={() => setShowEmergencyModal(false)}
+                  className="hover:bg-red-700 rounded-full p-2 transition-all"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+                  <h3 className="text-lg font-bold text-red-700 mb-4">🚑 Sağlık Acilleri</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Kalp krizi, felç</li>
+                    <li>• Ambulans hizmeti</li>
+                    <li>• Hasta nakli</li>
+                    <li>• Acil ilaç tedariki</li>
+                  </ul>
+                  <button className="w-full mt-4 bg-red-600 text-white py-2 rounded-lg font-bold">
+                    Sağlık Acili Bildir
+                  </button>
+                </div>
+
+                <div className="bg-orange-50 border border-orange-200 rounded-2xl p-6">
+                  <h3 className="text-lg font-bold text-orange-700 mb-4">🚗 Ulaşım Acilleri</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Araç arızası</li>
+                    <li>• Acil taksi</li>
+                    <li>• Çekici hizmeti</li>
+                    <li>• Havaalanı ulaşım</li>
+                  </ul>
+                  <button className="w-full mt-4 bg-orange-600 text-white py-2 rounded-lg font-bold">
+                    Ulaşım Acili Bildir
+                  </button>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+                  <h3 className="text-lg font-bold text-blue-700 mb-4">🏠 Barınma Acilleri</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Yangın/felaket mağduru</li>
+                    <li>• Acil konaklama</li>
+                    <li>• Evsizlik durumu</li>
+                    <li>• Güvenli barınma</li>
+                  </ul>
+                  <button className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg font-bold">
+                    Barınma Acili Bildir
+                  </button>
+                </div>
+
+                <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
+                  <h3 className="text-lg font-bold text-green-700 mb-4">⚡ Diğer Aciller</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Elektrik/su arızası</li>
+                    <li>• Çilingir hizmeti</li>
+                    <li>• Acil temizlik</li>
+                    <li>• Veteriner acili</li>
+                  </ul>
+                  <button className="w-full mt-4 bg-green-600 text-white py-2 rounded-lg font-bold">
+                    Diğer Acil Bildir
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+                <h4 className="font-bold text-yellow-800 mb-2">🦸‍♂️ Acil Durum Kahramanları</h4>
+                <p className="text-yellow-700 text-sm mb-4">
+                  Acil durumlarınızda size yardım edecek özel olarak eğitilmiş kahramanlarımız 24/7 hazır bekliyor.
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="flex -space-x-2">
+                    {mockSellers.filter(s => s.emergencyHero).map((hero, idx) => (
+                      <div key={idx} className="w-10 h-10 bg-gradient-to-r from-red-500 to-red-700 rounded-full flex items-center justify-center text-white font-bold border-2 border-white">
+                        {hero.avatar}
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-sm text-yellow-700 font-medium">
+                    4 acil durum kahramanı aktif
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card3D>
+      </div>
+    )
+  );
+
+  // Ana render
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      {currentScreen === 'welcome' && <WelcomeScreen />}
+      {currentScreen === 'home' && <HomeDashboard />}
+      {currentScreen === 'requests' && <RequestsScreen />}
+      {currentScreen === 'sellers' && <SellersScreen />}
+      
+      <Chatbot />
+      <EmergencyModal />
+    </div>
+  );
+};
+
+export default FindBuyerApp;
